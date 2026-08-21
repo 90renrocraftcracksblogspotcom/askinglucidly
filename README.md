@@ -111,11 +111,13 @@ Because we are using Cloudflare Pages Functions (`/functions` folder) instead of
 
 ---
 
-## 💾 Firebase & Data Persistence (Optional/Roadmap)
+## 💾 Firebase, Yugabyte & Data Persistence (Optional/Roadmap)
 
-While AskLucidly is completely stateless and ephemeral out-of-the-box, it was structurally designed to support **Firebase (Firestore + Auth)** for users who want chat history without the headache of a SQL database.
+While AskLucidly is completely stateless and ephemeral out-of-the-box, it was structurally designed to support database backends for users who want chat history without headaches.
 
-If you wish to add persistence:
+**Upcoming:** We will be adding **Yugabyte integration really soon for chat history** to provide a robust, distributed SQL option!
+
+If you wish to add Firebase persistence right now:
 1. Create a Firebase project and add your web credentials to `.env.local` (e.g., `NEXT_PUBLIC_FIREBASE_API_KEY`).
 2. Modify the `src/hooks/history.ts` and `src/hooks/threads.ts` files. Currently, these return mocked empty data to prevent errors on the edge. You can rewire them to fetch and write directly to Firestore.
 3. Because Firestore connects directly via the client side, you can store chat histories safely in the browser, completely bypassing the need to add complexity to the Cloudflare edge proxy!
