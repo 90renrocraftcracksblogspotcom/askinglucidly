@@ -1,5 +1,6 @@
 interface Env {
   NAGA_API_KEY: string;
+  SERPER_API_KEY?: string;
 }
 
 type PagesFunction<Env = any> = (context: {

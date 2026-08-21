@@ -80,6 +80,7 @@ export const ChatPanel = ({ threadId }: { threadId?: number }) => {
       hasRun.current = true;
       handleSend(queryMessage);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [queryMessage]);
 
   useEffect(() => {
