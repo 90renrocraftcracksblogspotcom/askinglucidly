@@ -69,6 +69,14 @@ Because we are using Cloudflare Pages Functions (`/functions` folder) instead of
    * Add `NAGA_API_KEY` to the Cloudflare Pages environment variables in the dashboard.
 6. Click **Save and Deploy**.
 
+### 5. Firebase & Data Persistence (Optional/Roadmap)
+While AskLucidity is currently stateless and ephemeral by default, it is designed to easily integrate with **Firebase (Firestore + Auth)** for saving chat history and user sessions without spinning up a traditional database.
+
+To implement persistence:
+1. Create a Firebase project and add your Firebase credentials to `.env.local`.
+2. Connect the `src/hooks/history.ts` and `src/hooks/threads.ts` files to Firestore instead of our current mocked endpoints.
+3. Chat histories can then be stored safely on the client side directly to Firebase, bypassing the edge proxy entirely!
+
 ## 🤝 Open Source
 Contributions are welcome! If you want to add persistence, user auth, or streaming SSE back into the Cloudflare proxy, please feel free to submit a Pull Request.
 
