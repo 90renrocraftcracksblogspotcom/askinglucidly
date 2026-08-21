@@ -3,20 +3,39 @@
 [![Next.js](https://img.shields.io/badge/Next.js-14.2-black?logo=next.js)](https://nextjs.org/)
 [![Cloudflare Pages](https://img.shields.io/badge/Cloudflare-Pages-F38020?logo=cloudflare)](https://pages.cloudflare.com/)
 [![Naga API](https://img.shields.io/badge/LLM-Naga_API-blue)](https://naga.ac)
+[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 
-AskLucidity is an open-source, premium, dark-mode AI search engine. It serves as a high-fidelity Perplexity clone utilizing a fully serverless edge architecture. 
+AskLucidity is an open-source, premium, dark-mode AI search engine. It serves as a high-fidelity Perplexity clone built entirely on a **fully serverless edge architecture**. 
 
-**Referenced heavily from:** [rashadphz/farfalle](https://github.com/rashadphz/farfalle)
+*Note: The frontend UI components and design system were adapted from [rashadphz/farfalle](https://github.com/rashadphz/farfalle). However, the entire backend architecture, data flow, and LLM implementation are 100% custom and completely different from Farfalle.*
 
-## 🏗️ Architecture
+---
 
-AskLucidity relies on a **100% serverless frontend architecture (Next.js)** coupled with **Cloudflare Pages Functions** as a secure proxy. We stripped out the heavy FastAPI backend used in the original Farfalle repository to make this incredibly lightweight, fast, and completely free to host.
+## 🏗️ Deep-Dive Architecture
 
-### Naga API & Sonar (Perplexity)
-We use [Naga API (api.naga.ac)](https://naga.ac) as our backend LLM provider to power the search results. Specifically, we tap into the `sonar:free` (Sonar by Perplexity) model with web search tools enabled. 
-By utilizing Naga API, we gain access to high-quality internet-connected LLM capabilities at a fraction of the cost, completely avoiding the need for a Python backend. Our Cloudflare Pages Function (`/functions/api/chat.ts`) securely holds the `NAGA_API_KEY` and proxies the requests to Naga, ensuring keys are never exposed to the client.
+Unlike traditional AI wrappers that rely on heavy Python/FastAPI backends, PostgreSQL databases, and complex Docker deployments, AskLucidity is designed to be **ephemeral, stateless, and incredibly cheap to host**. 
 
-## 🚀 Detailed Build Guide
+### 1. The Frontend (Next.js)
+The frontend is built with **Next.js 14 (App Router)**, Tailwind CSS, and Radix UI. 
+* We have stripped out all of Farfalle's OpenAPI auto-generated clients, Server-Sent Events (SSE) streaming logic, and rigid backend dependencies.
+* The frontend simply makes a standard `POST` request to our local `/api/chat` route and expects a standard JSON response containing the Markdown text and citations.
+* The UI mimics streaming by instantly loading the full response and parsing the Perplexity-style citations `[1]`, `[2]` into interactive chips.
+
+### 2. The Edge Proxy (Cloudflare Pages Functions)
+To protect our API keys from being exposed to the client, we utilize **Cloudflare Pages Functions**. 
+* The code inside `/functions/api/chat.ts` acts as a secure, serverless edge proxy. 
+* When the Next.js frontend calls `/api/chat`, Cloudflare intercepts this and runs the edge function.
+* The function securely injects the `NAGA_API_KEY`, makes the request to the upstream LLM provider, handles transient network errors (with built-in retry loops), and returns the sanitized JSON response to the frontend.
+
+### 3. The LLM Provider (Naga API & Sonar)
+We use [Naga API (api.naga.ac)](https://naga.ac) as our backend LLM provider.
+* We specifically query the `sonar:free` model (Sonar by Perplexity), which has native web-search capabilities.
+* Naga API provides this premium, internet-connected LLM access at a fraction of the standard cost.
+* Because Sonar natively handles the web searching and citation generation, we do not need to run our own web scrapers (like SearXNG), drastically simplifying the deployment stack.
+
+---
+
+## 🚀 Extreme Build & Deployment Guide
 
 ### Prerequisites
 * Node.js (v18+)
@@ -24,9 +43,10 @@ By utilizing Naga API, we gain access to high-quality internet-connected LLM cap
 * A Cloudflare account (for deployment)
 * A [Naga API Key](https://naga.ac)
 
-### 1. Local Setup & Installation
+### Step 1: Local Setup & Installation
 
-Clone the repository and install the required dependencies. We recommend using `--legacy-peer-deps` due to some React 18/19 peer dependency mismatches in the Farfalle UI components.
+Clone the repository and install the required dependencies. 
+**Crucial:** You must use `--legacy-peer-deps` due to intentional React 18/19 peer dependency mismatches in the UI library components.
 
 ```bash
 git clone https://github.com/90renrocraftcracksblogspotcom/askinglucidly.git
@@ -34,7 +54,7 @@ cd askinglucidly
 npm install --legacy-peer-deps
 ```
 
-### 2. Environment Variables
+### Step 2: Environment Configuration
 
 Create a local environment file. 
 ```bash
@@ -46,39 +66,61 @@ Open `.env.local` and add your Naga API key:
 NAGA_API_KEY=your_naga_api_key_here
 ```
 
-### 3. Running the Development Server
+### Step 3: Running the Development Server
 
 Start the Next.js development server:
 ```bash
 npm run dev
 ```
-Navigate to [http://localhost:3000](http://localhost:3000). The local development server will automatically intercept calls to `/api/chat` and route them through the Cloudflare Pages proxy logic defined in `/functions/api/chat.ts` (Next.js rewrites this automatically during `dev` based on our `next.config.mjs`, or you can rely on Wrangler if testing edge functions strictly).
+Navigate to [http://localhost:3000](http://localhost:3000). 
+*How it works locally:* During `dev`, Next.js doesn't natively run Cloudflare Functions. However, our setup ensures that local `fetch` calls to `/api/chat` are seamlessly handled or rewritten so you can test the frontend UI. (For strict edge function testing, use Cloudflare's `wrangler pages dev`).
 
-### 4. Deploying to Cloudflare Pages
+### Step 4: Deploying to Cloudflare Pages
 
-Because we are using Cloudflare Pages Functions (`/functions` folder) instead of Next.js `/api` routes, this project is designed to be deployed instantly on Cloudflare Pages.
+Because we are using Cloudflare Pages Functions (`/functions` folder) instead of Next.js `/api` routes, this project is designed to be deployed instantly and for free on Cloudflare Pages.
 
 1. Go to your Cloudflare Dashboard -> **Workers & Pages**.
 2. Click **Create Application** -> **Pages** -> **Connect to Git**.
 3. Select this repository.
-4. **Build Settings:**
+4. **Configure Build Settings:**
    * **Framework preset:** Next.js
    * **Build command:** `npm run build`
-   * **Build output directory:** `.next` (or `out` if using static export)
-5. **Environment Variables:**
+   * **Build output directory:** `.next`
+5. **Configure Environment Variables:**
    * Add `NAGA_API_KEY` to the Cloudflare Pages environment variables in the dashboard.
-6. Click **Save and Deploy**.
+6. Click **Save and Deploy**. Your app will be live globally in minutes.
 
-### 5. Firebase & Data Persistence (Optional/Roadmap)
-While AskLucidity is currently stateless and ephemeral by default, it is designed to easily integrate with **Firebase (Firestore + Auth)** for saving chat history and user sessions without spinning up a traditional database.
+---
 
-To implement persistence:
-1. Create a Firebase project and add your Firebase credentials to `.env.local`.
-2. Connect the `src/hooks/history.ts` and `src/hooks/threads.ts` files to Firestore instead of our current mocked endpoints.
-3. Chat histories can then be stored safely on the client side directly to Firebase, bypassing the edge proxy entirely!
+## 📂 Project Structure Breakdown
+
+```text
+├── /functions          # Cloudflare Pages Edge Functions
+│   └── /api/chat.ts    # Secure proxy to Naga API (handles retries & formatting)
+├── /src
+│   ├── /app            # Next.js App Router pages (Home, Search, History)
+│   ├── /components     # UI Components (Adapted from Farfalle)
+│   ├── /hooks          # React Query hooks (Customized for stateless JSON fetch)
+│   └── /stores         # Zustand state management
+├── /public             # Static assets and logos
+└── tailwind.config.ts  # Theme and styling configuration
+```
+
+---
+
+## 💾 Firebase & Data Persistence (Optional/Roadmap)
+
+While AskLucidity is completely stateless and ephemeral out-of-the-box, it was structurally designed to support **Firebase (Firestore + Auth)** for users who want chat history without the headache of a SQL database.
+
+If you wish to add persistence:
+1. Create a Firebase project and add your web credentials to `.env.local` (e.g., `NEXT_PUBLIC_FIREBASE_API_KEY`).
+2. Modify the `src/hooks/history.ts` and `src/hooks/threads.ts` files. Currently, these return mocked empty data to prevent errors on the edge. You can rewire them to fetch and write directly to Firestore.
+3. Because Firestore connects directly via the client side, you can store chat histories safely in the browser, completely bypassing the need to add complexity to the Cloudflare edge proxy!
+
+---
 
 ## 🤝 Open Source
-Contributions are welcome! If you want to add persistence, user auth, or streaming SSE back into the Cloudflare proxy, please feel free to submit a Pull Request.
+Contributions are highly encouraged! If you want to build out the Firebase persistence layer, add user authentication, or re-implement Server-Sent Events (SSE) streaming for the Cloudflare proxy, please submit a Pull Request.
 
 ## 📄 License
 This project is licensed under the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)](https://creativecommons.org/licenses/by-nc-sa/4.0/) License.
