@@ -70,8 +70,8 @@ export default function LoginPage() {
           </h1>
           <p className="text-sm text-muted-foreground">
             {isSignUp
-              ? "Sign up to get unlimited access to AskLucidity"
-              : "Welcome back to AskLucidity"}
+              ? "Sign up to get unlimited access to AskLucidly"
+              : "Welcome back to AskLucidly"}
           </p>
         </div>
 

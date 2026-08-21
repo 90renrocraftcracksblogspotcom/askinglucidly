@@ -21,7 +21,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     // If it's not Sonar, we must manually fetch web results using Serper
     if (userModel !== "sonar:free") {
       if (!context.env.SERPER_API_KEY) {
-        console.warn("[AskLucidity] SERPER_API_KEY not set. Falling back to non-search generation.");
+        console.warn("[AskLucidly] SERPER_API_KEY not set. Falling back to non-search generation.");
       } else {
         try {
           const serpRes = await fetch("https://google.serper.dev/search", {
@@ -49,7 +49,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
             }
           }
         } catch (e) {
-          console.error("[AskLucidity] Serper API error:", e);
+          console.error("[AskLucidly] Serper API error:", e);
         }
       }
     }
@@ -94,7 +94,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
       if (!response.ok) {
         errorText = await response.text();
-        console.log(`[AskLucidity] Attempt ${attempt} failed with status ${response.status}: ${errorText}`);
+        console.log(`[AskLucidly] Attempt ${attempt} failed with status ${response.status}: ${errorText}`);
         
         try {
           const errData = JSON.parse(errorText);
@@ -102,7 +102,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
           const errMsg = errorNested?.error?.message || errorNested?.message || "";
           
           if (errMsg.includes("temporarily unavailable") || errMsg.includes("upstream provider")) {
-            console.log(`[AskLucidity] Upstream provider unavailable. Retrying...`);
+            console.log(`[AskLucidly] Upstream provider unavailable. Retrying...`);
             if (attempt < maxAttempts) {
               await new Promise((resolve) => setTimeout(resolve, 2000));
               continue;
@@ -141,7 +141,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       { headers: { "Content-Type": "application/json" } }
     );
   } catch (err: any) {
-    console.error("[AskLucidity] Exception:", err);
+    console.error("[AskLucidly] Exception:", err);
     return new Response(JSON.stringify({ error: err.message }), { status: 500 });
   }
 };

@@ -17,11 +17,11 @@ const mono = Mono({
   variable: "--font-mono",
 });
 
-const title = "AskLucidity";
+const title = "AskLucidly";
 const description = "Open-source AI powered answer engine by Frostborn.tech.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://asklucidity.com/"),
+  metadataBase: new URL("https://AskLucidly.com/"),
   title,
   description,
   openGraph: {

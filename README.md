@@ -1,11 +1,11 @@
-# AskLucidity v1.0.0
+# AskLucidly v1.0.0
 
 [![Next.js](https://img.shields.io/badge/Next.js-14.2-black?logo=next.js)](https://nextjs.org/)
 [![Cloudflare Pages](https://img.shields.io/badge/Cloudflare-Pages-F38020?logo=cloudflare)](https://pages.cloudflare.com/)
 [![Naga API](https://img.shields.io/badge/LLM-Naga_API-blue)](https://naga.ac)
 [![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 
-AskLucidity is an open-source, premium, dark-mode AI search engine. It serves as a high-fidelity Perplexity clone built entirely on a **fully serverless edge architecture**. 
+AskLucidly is an open-source, premium, dark-mode AI search engine. It serves as a high-fidelity Perplexity clone built entirely on a **fully serverless edge architecture**. 
 
 *Note: The frontend UI components and design system were adapted from [rashadphz/farfalle](https://github.com/rashadphz/farfalle). However, the entire backend architecture, data flow, and LLM implementation are 100% custom and completely different from Farfalle.*
 
@@ -13,7 +13,7 @@ AskLucidity is an open-source, premium, dark-mode AI search engine. It serves as
 
 ## 🏗️ Deep-Dive Architecture
 
-Unlike traditional AI wrappers that rely on heavy Python/FastAPI backends, PostgreSQL databases, and complex Docker deployments, AskLucidity is designed to be **ephemeral, stateless, and incredibly cheap to host**. 
+Unlike traditional AI wrappers that rely on heavy Python/FastAPI backends, PostgreSQL databases, and complex Docker deployments, AskLucidly is designed to be **ephemeral, stateless, and incredibly cheap to host**. 
 
 ### 1. The Frontend (Next.js)
 The frontend is built with **Next.js 14 (App Router)**, Tailwind CSS, and Radix UI. 
@@ -113,7 +113,7 @@ Because we are using Cloudflare Pages Functions (`/functions` folder) instead of
 
 ## 💾 Firebase & Data Persistence (Optional/Roadmap)
 
-While AskLucidity is completely stateless and ephemeral out-of-the-box, it was structurally designed to support **Firebase (Firestore + Auth)** for users who want chat history without the headache of a SQL database.
+While AskLucidly is completely stateless and ephemeral out-of-the-box, it was structurally designed to support **Firebase (Firestore + Auth)** for users who want chat history without the headache of a SQL database.
 
 If you wish to add persistence:
 1. Create a Firebase project and add your web credentials to `.env.local` (e.g., `NEXT_PUBLIC_FIREBASE_API_KEY`).

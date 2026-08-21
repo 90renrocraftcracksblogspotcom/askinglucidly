@@ -33,7 +33,13 @@ export default function RecentChat({
             <p className="text-xs">{formattedDate}</p>
           </div>
           <div className="flex items-center space-x-2 text-foreground/70">
-            {model?.smallIcon}
+            {model?.logoUrl && (
+              <img
+                src={model.logoUrl}
+                alt={model.name}
+                className="w-3 h-3 rounded-sm object-contain"
+              />
+            )}
             <p className="font-semibold text-xs">{model?.name}</p>
           </div>
         </div>

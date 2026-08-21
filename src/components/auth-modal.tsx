@@ -70,7 +70,7 @@ export function AuthModal({ onClose }: { onClose: () => void }) {
             {isSignUp ? "Create an account" : "Welcome back"}
           </h2>
           <p className="text-sm text-muted-foreground mt-1">
-            Sign up to continue using AskLucidity
+            Sign up to continue using AskLucidly
           </p>
         </div>
 

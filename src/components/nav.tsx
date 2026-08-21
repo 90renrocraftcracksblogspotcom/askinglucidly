@@ -27,7 +27,7 @@ export function Navbar() {
       <div className="flex items-center gap-2">
         <Link href="/" passHref onClick={() => (location.href = "/")}>
           <span className="text-lg font-bold tracking-tight text-foreground">
-            AskLucidity
+            AskLucidly
           </span>
         </Link>
         {!onHomePage && <NewChatButton />}

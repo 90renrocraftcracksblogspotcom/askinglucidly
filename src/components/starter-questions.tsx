@@ -1,7 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 
 const starterQuestions = [
-  "What is AskLucidity?",
+  "What is AskLucidly?",
   "Tell me about the latest AI models",
   "How does serverless edge computing work?",
   "What are the benefits of vector databases?",

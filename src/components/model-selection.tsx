@@ -9,11 +9,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  BrainIcon,
-  RabbitIcon,
-  ZapIcon,
-} from "lucide-react";
 import { useConfigStore } from "@/stores";
 import { ChatModel } from "../../generated";
 
@@ -21,31 +16,29 @@ type Model = {
   name: string;
   description: string;
   value: string;
-  smallIcon: React.ReactNode;
-  icon: React.ReactNode;
+  logoUrl: string;
 };
+
+const LOGO_TOKEN = "live_6a1a28fd-6420-4492-aeb0-b297461d9de2";
 
 export const modelMap: Record<ChatModel, Model> = {
   [ChatModel.SONAR_FREE]: {
-    name: "Fast",
-    description: "Perplexity Sonar (Web Search)",
+    name: "Sonar",
+    description: "Web search powered",
     value: ChatModel.SONAR_FREE,
-    smallIcon: <RabbitIcon className="w-4 h-4 text-cyan-400" />,
-    icon: <RabbitIcon className="w-5 h-5 text-cyan-400" />,
+    logoUrl: `https://img.logo.dev/perplexity.ai?token=${LOGO_TOKEN}&size=128&retina=true&format=png`,
   },
   [ChatModel.DEEPSEEK_V4_FLASH]: {
-    name: "Powerful",
-    description: "DeepSeek V4 Flash",
+    name: "DeepSeek V4",
+    description: "Fast & capable",
     value: ChatModel.DEEPSEEK_V4_FLASH,
-    smallIcon: <ZapIcon className="w-4 h-4 text-yellow-400" />,
-    icon: <ZapIcon className="w-5 h-5 text-yellow-400" />,
+    logoUrl: `https://img.logo.dev/deepseek.com?token=${LOGO_TOKEN}&size=128&retina=true&format=png`,
   },
   [ChatModel.NEMOTRON_3_ULTRA]: {
-    name: "Expert",
-    description: "NVIDIA Nemotron Ultra 550B",
+    name: "Nemotron Ultra",
+    description: "550B reasoning",
     value: ChatModel.NEMOTRON_3_ULTRA,
-    smallIcon: <BrainIcon className="w-4 h-4 text-emerald-400" />,
-    icon: <BrainIcon className="w-5 h-5 text-emerald-400" />,
+    logoUrl: `https://img.logo.dev/nvidia.com?token=${LOGO_TOKEN}&size=128&retina=true&format=png`,
   },
 };
 
@@ -53,13 +46,17 @@ const ModelItem: React.FC<{ model: Model }> = ({ model }) => (
   <SelectItem
     key={model.value}
     value={model.value}
-    className="flex flex-col items-start p-2"
+    className="flex flex-col items-start p-2.5 cursor-pointer"
   >
-    <div className="flex items-center space-x-2">
-      {model.icon}
+    <div className="flex items-center space-x-3">
+      <img
+        src={model.logoUrl}
+        alt={model.name}
+        className="w-5 h-5 rounded-sm object-contain"
+      />
       <div className="flex flex-col">
-        <span className="font-bold">{model.name}</span>
-        <span className="text-muted-foreground">{model.description}</span>
+        <span className="font-semibold text-sm">{model.name}</span>
+        <span className="text-xs text-muted-foreground">{model.description}</span>
       </div>
     </div>
   </SelectItem>
@@ -79,15 +76,19 @@ export function ModelSelection() {
         }
       }}
     >
-      <SelectTrigger className="w-fit space-x-2 bg-transparent outline-none border-none select-none focus:ring-0 shadow-none transition-all duration-200 ease-in-out hover:scale-[1.05] text-sm">
+      <SelectTrigger className="w-fit space-x-2 bg-transparent outline-none border-none select-none focus:ring-0 shadow-none transition-all duration-200 ease-in-out hover:opacity-80 text-sm">
         <SelectValue>
           <div className="flex items-center space-x-2">
-            {selectedModel.smallIcon}
-            <span className="font-semibold">{selectedModel.name}</span>
+            <img
+              src={selectedModel.logoUrl}
+              alt={selectedModel.name}
+              className="w-4 h-4 rounded-sm object-contain"
+            />
+            <span className="font-medium">{selectedModel.name}</span>
           </div>
         </SelectValue>
       </SelectTrigger>
-      <SelectContent className="w-[260px]">
+      <SelectContent className="w-[240px]">
         <SelectGroup>
           {Object.values(modelMap).map((m) => (
             <ModelItem key={m.value} model={m} />

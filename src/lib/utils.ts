@@ -18,7 +18,7 @@ export function isCloudModel(model: ChatModel) {
   ].includes(model);
 }
 
-const GUEST_MSG_KEY = "asklucidity_guest_msgs";
+const GUEST_MSG_KEY = "asklucidly_guest_msgs";
 
 export function getGuestMessageCount(): number {
   if (typeof window === "undefined") return 0;
