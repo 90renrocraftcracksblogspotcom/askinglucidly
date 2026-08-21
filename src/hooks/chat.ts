@@ -60,7 +60,7 @@ export const useChat = () => {
         
         state.content = data.text;
         
-        // Map our simple citations to what Farfalle expects for sources (title, url, text)
+        // Map our simple citations to what the UI expects for sources (title, url, text)
         if (data.citations && Array.isArray(data.citations)) {
            state.sources = data.citations.map((c: any) => ({
              title: c.title || new URL(c.url || "https://example.com").hostname,

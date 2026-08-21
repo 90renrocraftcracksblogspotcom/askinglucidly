@@ -18,7 +18,7 @@ const NewChatButton = () => {
 };
 
 const TextLogo = () => {
-  return <div className="text-2xl font-medium">farfalle</div>;
+  return <div className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-cyan-500">AskLucidity</div>;
 };
 
 export function Navbar() {
@@ -32,11 +32,9 @@ export function Navbar() {
     <header className="w-full flex fixed p-1 z-50 px-2 bg-background/95 justify-between items-center">
       <div className="flex items-center gap-2">
         <Link href="/" passHref onClick={() => (location.href = "/")}>
-          <img
-            src={theme === "light" ? "/logo-black.png" : "/logo-white.png"}
-            alt="Logo"
-            className="w-12 h-12"
-          />
+          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 text-white shadow-lg">
+            <span className="font-bold text-xl">L</span>
+          </div>
         </Link>
         {onHomePage ? <TextLogo /> : <NewChatButton />}
       </div>
@@ -48,6 +46,11 @@ export function Navbar() {
               History
             </div>
           </div>
+        </Link>
+        <Link href="/login" passHref>
+          <Button variant="outline" size="sm" className="hidden md:flex font-medium">
+            Sign In
+          </Button>
         </Link>
         <ModeToggle />
       </div>

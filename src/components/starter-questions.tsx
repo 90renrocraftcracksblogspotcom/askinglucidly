@@ -1,10 +1,10 @@
 import { ArrowUpRight } from "lucide-react";
 
 const starterQuestions = [
-  "what is farfalle?",
-  "openai scarlett johansson?",
-  "what is groq?",
-  "what happened to ilya?",
+  "What is AskLucidity?",
+  "Tell me about the latest AI models",
+  "How does serverless edge computing work?",
+  "What are the benefits of vector databases?",
 ];
 
 export const StarterQuestionsList = ({
