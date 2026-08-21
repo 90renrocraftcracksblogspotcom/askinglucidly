@@ -49,7 +49,7 @@ export const useChat = () => {
         const res = await fetch("/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt: request.query }),
+          body: JSON.stringify({ prompt: request.query, model }),
         });
 
         if (!res.ok) {

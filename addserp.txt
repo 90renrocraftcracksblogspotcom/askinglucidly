@@ -1,0 +1,27 @@
+const axios = require('axios');
+let data = JSON.stringify({
+  "q": "apple inc"
+});
+
+let config = {
+  method: 'post',
+  maxBodyLength: Infinity,
+  url: 'https://google.serper.dev/search',
+  headers: { 
+    'X-API-KEY': '5faad20bc34c4a03aca708d38f628276334adab8', 
+    'Content-Type': 'application/json'
+  },
+  data : data
+};
+
+async function makeRequest() {
+  try {
+    const response = await axios.request(config);
+    console.log(JSON.stringify(response.data));
+  }
+  catch (error) {
+    console.log(error);
+  }
+}
+
+makeRequest();

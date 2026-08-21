@@ -22,7 +22,7 @@ export const createConfigSlice: StateCreator<
   [],
   ConfigStore
 > = (set) => ({
-  model: ChatModel.GPT_4O_MINI,
+  model: ChatModel.SONAR_FREE,
   localMode: false,
   proMode: false,
   setModel: (model: ChatModel) => set({ model }),

@@ -61,10 +61,12 @@ Create a local environment file.
 cp .env.example .env.local
 ```
 
-Open `.env.local` and add your Naga API key:
+Open `.env.local` and add your API keys:
 ```env
 NAGA_API_KEY=your_naga_api_key_here
+SERPER_API_KEY=your_serper_api_key_here
 ```
+*Note: `NAGA_API_KEY` is required for all LLM generations. `SERPER_API_KEY` is required for web search if you select a non-Sonar model (like Llama 3.3 or Nemotron) from the dropdown.*
 
 ### Step 3: Running the Development Server
 

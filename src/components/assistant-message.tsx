@@ -64,22 +64,7 @@ export const AssistantMessageContent = ({
           <MessageComponentSkeleton />
         )}
       </Section>
-      <Section title="Sources" animate={isStreaming}>
-        {!sources || sources.length === 0 ? (
-          <SearchResultsSkeleton />
-        ) : (
-          <>
-            <SearchResults results={sources} />
-          </>
-        )}
-      </Section>
-      <Section title="Images" animate={isStreaming}>
-        {images && images.length > 0 ? (
-          <ImageSection images={images} />
-        ) : (
-          <ImageSectionSkeleton />
-        )}
-      </Section>
+
       {related_queries && related_queries.length > 0 && (
         <Section title="Related" animate={isStreaming}>
           <RelatedQuestions

@@ -51,6 +51,34 @@ export const modelMap: Record<ChatModel, Model> = {
     smallIcon: <BrainIcon className="w-4 h-4 text-pink-500" />,
     icon: <BrainIcon className="w-5 h-5 text-pink-500" />,
   },
+  [ChatModel.SONAR_FREE]: {
+    name: "Sonar (Web Search)",
+    description: "Perplexity/Sonar",
+    value: ChatModel.SONAR_FREE,
+    smallIcon: <RabbitIcon className="w-4 h-4 text-cyan-500" />,
+    icon: <RabbitIcon className="w-5 h-5 text-cyan-500" />,
+  },
+  [ChatModel.NEMOTRON_3_ULTRA]: {
+    name: "Nemotron 3 Ultra",
+    description: "nemotron-3-ultra-550b",
+    value: ChatModel.NEMOTRON_3_ULTRA,
+    smallIcon: <BrainIcon className="w-4 h-4 text-pink-500" />,
+    icon: <BrainIcon className="w-5 h-5 text-pink-500" />,
+  },
+  [ChatModel.LLAMA_3_3_70B]: {
+    name: "Llama 3.3 70B",
+    description: "llama-3.3-70b-instruct",
+    value: ChatModel.LLAMA_3_3_70B,
+    smallIcon: <LightningBoltIcon className="w-4 h-4 text-yellow-500" />,
+    icon: <LightningBoltIcon className="w-5 h-5 text-yellow-500" />,
+  },
+  [ChatModel.NEMOTRON_3_SUPER]: {
+    name: "Nemotron 3 Super",
+    description: "nemotron-3-super-120b",
+    value: ChatModel.NEMOTRON_3_SUPER,
+    smallIcon: <BrainIcon className="w-4 h-4 text-green-500" />,
+    icon: <BrainIcon className="w-5 h-5 text-green-500" />,
+  },
   [ChatModel.LLAMA_3_70B]: {
     name: "Hyper",
     description: "Groq/Llama3-70B",
@@ -123,7 +151,7 @@ const ModelItem: React.FC<{ model: Model }> = ({ model }) => (
 
 export function ModelSelection() {
   const { localMode, model, setModel, toggleLocalMode } = useConfigStore();
-  const selectedModel = modelMap[model] ?? modelMap[ChatModel.GPT_4O_MINI];
+  const selectedModel = modelMap[model] ?? modelMap[ChatModel.SONAR_FREE];
 
   return (
     <Select

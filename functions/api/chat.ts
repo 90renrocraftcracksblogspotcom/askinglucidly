@@ -9,9 +9,49 @@ type PagesFunction<Env = any> = (context: {
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   try {
-    const { prompt } = (await context.request.json()) as { prompt?: string };
+    const { prompt, model } = (await context.request.json()) as { prompt?: string, model?: string };
+    const userModel = model || "sonar:free";
 
     if (!prompt) return new Response(JSON.stringify({ error: "Prompt required" }), { status: 400 });
+
+    let finalPrompt = prompt;
+    let manualCitations: any[] = [];
+
+    // If it's not Sonar, we must manually fetch web results using Serper
+    if (userModel !== "sonar:free") {
+      if (!context.env.SERPER_API_KEY) {
+        console.warn("[AskLucidity] SERPER_API_KEY not set. Falling back to non-search generation.");
+      } else {
+        try {
+          const serpRes = await fetch("https://google.serper.dev/search", {
+            method: "POST",
+            headers: {
+              "X-API-KEY": context.env.SERPER_API_KEY,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ q: prompt })
+          });
+
+          if (serpRes.ok) {
+            const serpData: any = await serpRes.json();
+            const organic = serpData.organic || [];
+            if (organic.length > 0) {
+              const topResults = organic.slice(0, 5);
+              const searchContext = topResults.map((r: any, i: number) => `[${i + 1}] ${r.title}\n${r.snippet}\n${r.link}`).join("\n\n");
+              finalPrompt = `Please answer the user's query based on the following web search context:\n\n${searchContext}\n\nQuery: ${prompt}`;
+              
+              manualCitations = topResults.map((r: any) => ({
+                title: r.title,
+                url: r.link,
+                snippet: r.snippet
+              }));
+            }
+          }
+        } catch (e) {
+          console.error("[AskLucidity] Serper API error:", e);
+        }
+      }
+    }
 
     let attempt = 0;
     const maxAttempts = 3;
@@ -21,18 +61,35 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     while (attempt < maxAttempts) {
       attempt++;
       
-      response = await fetch("https://api.naga.ac/v1/responses", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${context.env.NAGA_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "sonar:free",
-          input: prompt,
-          tools: [{ type: "web_search" }],
-        }),
-      });
+      if (userModel === "sonar:free") {
+        // Native Sonar API
+        response = await fetch("https://api.naga.ac/v1/responses", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${context.env.NAGA_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "sonar:free",
+            input: prompt, // Sonar native doesn't need finalPrompt injection
+            tools: [{ type: "web_search" }],
+          }),
+        });
+      } else {
+        // Standard OpenAI compatible endpoints for Llama / Nemotron
+        response = await fetch("https://api.naga.ac/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${context.env.NAGA_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: userModel,
+            messages: [{ role: "user", content: finalPrompt }],
+            stream: false
+          }),
+        });
+      }
 
       if (!response.ok) {
         errorText = await response.text();
@@ -40,26 +97,21 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         
         try {
           const errData = JSON.parse(errorText);
-          // Look for nested error string format provided by user
           const errorNested = typeof errData.error === 'string' ? JSON.parse(errData.error) : errData.error;
           const errMsg = errorNested?.error?.message || errorNested?.message || "";
           
           if (errMsg.includes("temporarily unavailable") || errMsg.includes("upstream provider")) {
-            console.log(`[AskLucidity] Upstream provider unavailable (thinking...). Retrying...`);
+            console.log(`[AskLucidity] Upstream provider unavailable. Retrying...`);
             if (attempt < maxAttempts) {
-              await new Promise((resolve) => setTimeout(resolve, 2000)); // wait 2 seconds
+              await new Promise((resolve) => setTimeout(resolve, 2000));
               continue;
             }
           }
-        } catch (e) {
-          // If JSON parse fails or other error, we don't retry by default
-        }
+        } catch (e) {}
 
-        // If we didn't continue, return the error
         return new Response(JSON.stringify({ error: errorText }), { status: response.status });
       }
 
-      // Successful response
       break;
     }
 
@@ -68,14 +120,22 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     }
 
     const data: any = await response.json();
-    const outputText = data?.output?.[0]?.content?.[0]?.text ?? "";
-    const citations = data?.output?.[0]?.content?.[0]?.annotations ?? [];
+    let outputText = "";
+    let citations: any[] = [];
+
+    if (userModel === "sonar:free") {
+      outputText = data?.output?.[0]?.content?.[0]?.text ?? "";
+      citations = data?.output?.[0]?.content?.[0]?.annotations ?? [];
+    } else {
+      outputText = data?.choices?.[0]?.message?.content ?? "";
+      citations = manualCitations; // from our Serper results
+    }
 
     return new Response(
       JSON.stringify({
         text: outputText,
         citations: citations,
-        model: "Sonar by Perplexity",
+        model: userModel,
       }),
       { headers: { "Content-Type": "application/json" } }
     );
