@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ModeToggle } from "./mode-toggle";
 import { Button } from "./ui/button";
-import { HistoryIcon, LogOutIcon, PlusIcon } from "lucide-react";
+import { HistoryIcon, LogOutIcon, PlusIcon, ArrowLeft } from "lucide-react";
 import { useChatStore } from "@/stores";
 import { useAuth } from "@/lib/auth";
 
@@ -20,11 +21,17 @@ export function Navbar() {
   const { messages } = useChatStore();
   const { user, signOut } = useAuth();
 
-  const onHomePage = messages.length === 0;
+  const pathname = usePathname();
+  const onHomePage = pathname === "/";
 
   return (
     <header className="w-full flex fixed p-1 z-50 px-3 bg-background/95 justify-between items-center">
       <div className="flex items-center gap-2">
+        {!onHomePage && (
+          <Button variant="ghost" size="icon" onClick={() => history.back()} className="mr-1">
+            <ArrowLeft className="w-5 h-5" />
+          </Button>
+        )}
         <Link href="/" passHref onClick={() => (location.href = "/")}>
           <span className="text-lg font-bold tracking-tight text-foreground">
             AskLucidly

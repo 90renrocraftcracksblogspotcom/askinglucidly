@@ -34,6 +34,10 @@ export function ErrorMessage({ content }: { content: string }) {
   );
 }
 
+import { useState } from "react";
+import { Check, Copy } from "lucide-react";
+import { Button } from "./ui/button";
+
 export const AssistantMessageContent = ({
   message,
   isStreaming = false,
@@ -51,15 +55,47 @@ export const AssistantMessageContent = ({
     is_error_message = false,
   } = message;
 
+  const [copied, setCopied] = useState(false);
+
   if (is_error_message) {
     return <ErrorMessage content={message.content} />;
   }
 
+  const handleCopy = () => {
+    navigator.clipboard.writeText(content);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col space-y-4">
+      {sources && sources.length > 0 && (
+        <Section title="Sources" animate={isStreaming}>
+          <SearchResults results={sources} />
+        </Section>
+      )}
+
+      {images && images.length > 0 && (
+        <Section title="Images" animate={isStreaming}>
+          <ImageSection images={images} />
+        </Section>
+      )}
+
       <Section title="Answer" animate={isStreaming} streaming={isStreaming}>
         {content ? (
-          <MessageComponent message={message} isStreaming={isStreaming} />
+          <div className="relative group">
+            <MessageComponent message={message} isStreaming={isStreaming} />
+            {!isStreaming && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleCopy}
+                className="absolute -bottom-6 -right-2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4 text-muted-foreground" />}
+              </Button>
+            )}
+          </div>
         ) : (
           <MessageComponentSkeleton />
         )}

@@ -70,6 +70,18 @@ export const useChat = () => {
         } else {
            state.sources = [];
         }
+        
+        // Visual chunk streaming
+        const fullText = data.text || "";
+        const chunks = fullText.split(" ");
+        let currentText = "";
+        
+        for (let i = 0; i < chunks.length; i++) {
+          currentText += (i === 0 ? "" : " ") + chunks[i];
+          state.content = currentText;
+          setStreamingMessage({ ...state });
+          await new Promise((r) => setTimeout(r, 20)); // stream out 50 words per second
+        }
 
         addMessage({ ...state });
       } catch (e: any) {
