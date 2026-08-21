@@ -11,9 +11,9 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 };
 
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-const db = getFirestore(app);
-const auth = getAuth(app);
+const app = firebaseConfig.apiKey ? (!getApps().length ? initializeApp(firebaseConfig) : getApp()) : null as any;
+const db = firebaseConfig.apiKey ? getFirestore(app) : null as any;
+const auth = firebaseConfig.apiKey ? getAuth(app) : null as any;
 
 export async function saveMessage(chatId: string, prompt: string, response: string) {
   try {
