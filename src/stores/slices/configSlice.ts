@@ -1,4 +1,3 @@
-import { env } from "@/env.mjs";
 import { StateCreator } from "zustand";
 import { ChatModel } from "../../../generated";
 
@@ -27,24 +26,7 @@ export const createConfigSlice: StateCreator<
   proMode: false,
   setModel: (model: ChatModel) => set({ model }),
   toggleLocalMode: () =>
-    set((state) => {
-      const localModeEnabled = env.NEXT_PUBLIC_LOCAL_MODE_ENABLED;
-      if (!localModeEnabled) {
-        return { ...state, localMode: false };
-      }
-
-      const newLocalMode = !state.localMode;
-      const newModel = newLocalMode
-        ? ChatModel.LLAMA3
-        : ChatModel.GPT_4O_MINI;
-      return { localMode: newLocalMode, model: newModel };
-    }),
+    set((state) => ({ ...state, localMode: false })),
   toggleProMode: () =>
-    set((state) => {
-      const proModeEnabled = env.NEXT_PUBLIC_PRO_MODE_ENABLED;
-      if (!proModeEnabled) {
-        return { ...state, proMode: false };
-      }
-      return { ...state, proMode: !state.proMode };
-    }),
+    set((state) => ({ ...state, proMode: !state.proMode })),
 });

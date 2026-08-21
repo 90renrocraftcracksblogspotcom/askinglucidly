@@ -2,31 +2,25 @@
 
 import { useState } from "react";
 import { useAuth } from "@/lib/auth";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 import { Label } from "@/components/ui/label";
-import { useRouter } from "next/navigation";
+import { X } from "lucide-react";
 
-export default function LoginPage() {
-  const { user, signInWithGoogle, signInWithEmail, signUpWithEmail } = useAuth();
-  const router = useRouter();
+export function AuthModal({ onClose }: { onClose: () => void }) {
+  const { signInWithGoogle, signInWithEmail, signUpWithEmail } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isSignUp, setIsSignUp] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(true);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
-  if (user) {
-    router.push("/");
-    return null;
-  }
 
   const handleGoogle = async () => {
     setLoading(true);
     setError("");
     try {
       await signInWithGoogle();
-      router.push("/");
+      onClose();
     } catch (e: any) {
       setError(e.message || "Google sign-in failed");
     } finally {
@@ -44,11 +38,11 @@ export default function LoginPage() {
       } else {
         await signInWithEmail(email, password);
       }
-      router.push("/");
+      onClose();
     } catch (err: any) {
       const code = err.code || "";
       if (code === "auth/email-already-in-use") {
-        setError("Email already in use. Try signing in.");
+        setError("Email already in use. Try signing in instead.");
       } else if (code === "auth/wrong-password" || code === "auth/invalid-credential") {
         setError("Invalid email or password.");
       } else if (code === "auth/weak-password") {
@@ -62,16 +56,21 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex h-screen w-full items-center justify-center p-4">
-      <div className="w-full max-w-sm space-y-6">
-        <div className="space-y-2 text-center">
-          <h1 className="text-2xl font-bold tracking-tight">
-            {isSignUp ? "Create an account" : "Sign in"}
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {isSignUp
-              ? "Sign up to get unlimited access to AskLucidity"
-              : "Welcome back to AskLucidity"}
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div className="relative w-full max-w-sm mx-4 bg-background border border-border rounded-2xl p-6 shadow-2xl">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <X size={18} />
+        </button>
+
+        <div className="mb-6">
+          <h2 className="text-xl font-semibold tracking-tight">
+            {isSignUp ? "Create an account" : "Welcome back"}
+          </h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            Sign up to continue using AskLucidity
           </p>
         </div>
 
@@ -102,7 +101,7 @@ export default function LoginPage() {
           Continue with Google
         </Button>
 
-        <div className="relative">
+        <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-border" />
           </div>
@@ -111,32 +110,36 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <form onSubmit={handleEmail} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+        <form onSubmit={handleEmail} className="space-y-3">
+          <div className="space-y-1.5">
+            <Label htmlFor="auth-email" className="text-sm">Email</Label>
             <Input
-              id="email"
+              id="auth-email"
               type="email"
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              className="h-10"
             />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+          <div className="space-y-1.5">
+            <Label htmlFor="auth-password" className="text-sm">Password</Label>
             <Input
-              id="password"
+              id="auth-password"
               type="password"
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
+              className="h-10"
             />
           </div>
 
-          {error && <p className="text-sm text-red-500">{error}</p>}
+          {error && (
+            <p className="text-sm text-red-500">{error}</p>
+          )}
 
           <Button
             type="submit"
@@ -147,7 +150,7 @@ export default function LoginPage() {
           </Button>
         </form>
 
-        <p className="text-center text-sm text-muted-foreground">
+        <p className="text-center text-sm text-muted-foreground mt-4">
           {isSignUp ? "Already have an account?" : "Don\u2019t have an account?"}{" "}
           <button
             onClick={() => { setIsSignUp(!isSignUp); setError(""); }}

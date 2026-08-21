@@ -65,18 +65,9 @@ export type ChatMessage = {
 };
 
 export enum ChatModel {
-  LLAMA_3_70B = "llama-3-70b",
-  GPT_4O = "gpt-4o",
-  GPT_4O_MINI = "gpt-4o-mini",
-  LLAMA3 = "llama3.1",
-  GEMMA = "gemma",
-  MISTRAL = "mistral",
-  PHI3_14B = "phi3:14b",
-  CUSTOM = "custom",
   SONAR_FREE = "sonar:free",
+  DEEPSEEK_V4_FLASH = "deepseek-v4-flash",
   NEMOTRON_3_ULTRA = "nemotron-3-ultra-550b-a55b:free",
-  LLAMA_3_3_70B = "llama-3.3-70b-instruct:free",
-  NEMOTRON_3_SUPER = "nemotron-3-super-120b-a12b:free",
 }
 
 export type ChatRequest = {

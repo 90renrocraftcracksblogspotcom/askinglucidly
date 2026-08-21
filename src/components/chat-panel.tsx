@@ -11,6 +11,9 @@ import { LoaderIcon } from "lucide-react";
 import { MessageRole } from "../../generated";
 import MessagesList from "./messages-list";
 import { StarterQuestionsList } from "./starter-questions";
+import { useAuth } from "@/lib/auth";
+import { getGuestMessageCount, incrementGuestMessageCount } from "@/lib/utils";
+import { AuthModal } from "./auth-modal";
 
 const useAutoScroll = (ref: React.RefObject<HTMLDivElement>) => {
   const { messages } = useChatStore();
@@ -64,11 +67,13 @@ export const ChatPanel = ({ threadId }: { threadId?: number }) => {
   } = useChat();
   const { messages, setMessages, setThreadId } = useChatStore();
   const { data: thread, isLoading, error } = useChatThread(threadId);
+  const { user } = useAuth();
 
   const [width, setWidth] = useState(0);
   const messagesRef = useRef<HTMLDivElement | null>(null);
   const messageBottomRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   useAutoScroll(messageBottomRef);
   useAutoResizeInput(messagesRef, setWidth);
@@ -95,8 +100,31 @@ export const ChatPanel = ({ threadId }: { threadId?: number }) => {
     }
   }, [messages, setThreadId]);
 
+  const handleSendWithGate = async (query: string) => {
+    // If user is logged in, always allow
+    if (user) {
+      await handleSend(query);
+      return;
+    }
+
+    // Guest: check message count
+    const count = getGuestMessageCount();
+    if (count >= 1) {
+      // Already used their free message, show auth modal
+      setShowAuthModal(true);
+      return;
+    }
+
+    // Allow the first message and increment count
+    incrementGuestMessageCount();
+    await handleSend(query);
+  };
+
   return (
     <>
+      {showAuthModal && (
+        <AuthModal onClose={() => setShowAuthModal(false)} />
+      )}
       {messages.length > 0 || threadId ? (
         isLoading ? (
           <div className="w-full flex justify-center items-center">
@@ -109,25 +137,25 @@ export const ChatPanel = ({ threadId }: { threadId?: number }) => {
               streamingMessage={streamingMessage}
               isStreamingMessage={isStreamingMessage}
               isStreamingProSearch={isStreamingProSearch}
-              onRelatedQuestionSelect={handleSend}
+              onRelatedQuestionSelect={handleSendWithGate}
             />
             <div ref={messageBottomRef} className="h-0" />
             <div
               className="bottom-12 fixed px-2 max-w-screen-md justify-center items-center md:px-2"
               style={{ width: `${width}px` }}
             >
-              <AskInput isFollowingUp sendMessage={handleSend} />
+              <AskInput isFollowingUp sendMessage={handleSendWithGate} />
             </div>
           </div>
         )
       ) : (
         <div className="w-full flex flex-col justify-center items-center">
           <div className="flex items-center justify-center mb-8">
-            <span className="text-3xl">Ask anything</span>
+            <span className="text-3xl font-light tracking-tight">Ask anything</span>
           </div>
-          <AskInput sendMessage={handleSend} />
+          <AskInput sendMessage={handleSendWithGate} />
           <div className="w-full flex flex-row px-3 justify-between space-y-2 pt-1">
-            <StarterQuestionsList handleSend={handleSend} />
+            <StarterQuestionsList handleSend={handleSendWithGate} />
           </div>
         </div>
       )}

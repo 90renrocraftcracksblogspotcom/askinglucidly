@@ -2,11 +2,10 @@
 
 import Link from "next/link";
 import { ModeToggle } from "./mode-toggle";
-import { useTheme } from "next-themes";
 import { Button } from "./ui/button";
-import { HistoryIcon, PlusIcon } from "lucide-react";
+import { HistoryIcon, LogOutIcon, PlusIcon } from "lucide-react";
 import { useChatStore } from "@/stores";
-import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth";
 
 const NewChatButton = () => {
   return (
@@ -17,28 +16,23 @@ const NewChatButton = () => {
   );
 };
 
-const TextLogo = () => {
-  return <div className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-cyan-500">AskLucidity</div>;
-};
-
 export function Navbar() {
-  const router = useRouter();
-  const { theme } = useTheme();
   const { messages } = useChatStore();
+  const { user, signOut } = useAuth();
 
   const onHomePage = messages.length === 0;
 
   return (
-    <header className="w-full flex fixed p-1 z-50 px-2 bg-background/95 justify-between items-center">
+    <header className="w-full flex fixed p-1 z-50 px-3 bg-background/95 justify-between items-center">
       <div className="flex items-center gap-2">
         <Link href="/" passHref onClick={() => (location.href = "/")}>
-          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 text-white shadow-lg">
-            <span className="font-bold text-xl">L</span>
-          </div>
+          <span className="text-lg font-bold tracking-tight text-foreground">
+            AskLucidity
+          </span>
         </Link>
-        {onHomePage ? <TextLogo /> : <NewChatButton />}
+        {!onHomePage && <NewChatButton />}
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
         <Link href="/history" passHref>
           <div className="font-medium hover:underline decoration-tint underline-offset-4 transition-all duration-200 ease-in-out transform hover:scale-[1.02] text-left break-words normal-case">
             <div className="flex items-center gap-2">
@@ -47,11 +41,23 @@ export function Navbar() {
             </div>
           </div>
         </Link>
-        <Link href="/login" passHref>
-          <Button variant="outline" size="sm" className="hidden md:flex font-medium">
-            Sign In
+        {user ? (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => signOut()}
+            className="font-medium gap-2 text-muted-foreground hover:text-foreground"
+          >
+            <LogOutIcon className="w-4 h-4" />
+            <span className="hidden md:inline">Sign out</span>
           </Button>
-        </Link>
+        ) : (
+          <Link href="/login" passHref>
+            <Button variant="outline" size="sm" className="hidden md:flex font-medium">
+              Sign In
+            </Button>
+          </Link>
+        )}
         <ModeToggle />
       </div>
     </header>

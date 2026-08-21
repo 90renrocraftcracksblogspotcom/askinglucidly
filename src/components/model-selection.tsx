@@ -9,24 +9,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { LightningBoltIcon, MagicWandIcon } from "@radix-ui/react-icons";
 import {
-  AtomIcon,
   BrainIcon,
-  FlameIcon,
-  Rabbit,
   RabbitIcon,
-  SettingsIcon,
-  SparklesIcon,
-  WandSparklesIcon,
+  ZapIcon,
 } from "lucide-react";
-import { useConfigStore, useChatStore } from "@/stores";
+import { useConfigStore } from "@/stores";
 import { ChatModel } from "../../generated";
-import { isCloudModel, isLocalModel } from "@/lib/utils";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-import _ from "lodash";
-import { env } from "@/env.mjs";
 
 type Model = {
   name: string;
@@ -37,101 +26,28 @@ type Model = {
 };
 
 export const modelMap: Record<ChatModel, Model> = {
-  [ChatModel.GPT_4O_MINI]: {
-    name: "Fast",
-    description: "OpenAI/GPT-4o-mini",
-    value: ChatModel.GPT_4O_MINI,
-    smallIcon: <RabbitIcon className="w-4 h-4 text-cyan-500" />,
-    icon: <RabbitIcon className="w-5 h-5 text-cyan-500" />,
-  },
-  [ChatModel.GPT_4O]: {
-    name: "Powerful",
-    description: "OpenAI/GPT-4o",
-    value: ChatModel.GPT_4O,
-    smallIcon: <BrainIcon className="w-4 h-4 text-pink-500" />,
-    icon: <BrainIcon className="w-5 h-5 text-pink-500" />,
-  },
   [ChatModel.SONAR_FREE]: {
-    name: "Sonar (Web Search)",
-    description: "Perplexity/Sonar",
+    name: "Fast",
+    description: "Perplexity Sonar (Web Search)",
     value: ChatModel.SONAR_FREE,
-    smallIcon: <RabbitIcon className="w-4 h-4 text-cyan-500" />,
-    icon: <RabbitIcon className="w-5 h-5 text-cyan-500" />,
+    smallIcon: <RabbitIcon className="w-4 h-4 text-cyan-400" />,
+    icon: <RabbitIcon className="w-5 h-5 text-cyan-400" />,
+  },
+  [ChatModel.DEEPSEEK_V4_FLASH]: {
+    name: "Powerful",
+    description: "DeepSeek V4 Flash",
+    value: ChatModel.DEEPSEEK_V4_FLASH,
+    smallIcon: <ZapIcon className="w-4 h-4 text-yellow-400" />,
+    icon: <ZapIcon className="w-5 h-5 text-yellow-400" />,
   },
   [ChatModel.NEMOTRON_3_ULTRA]: {
-    name: "Nemotron 3 Ultra",
-    description: "nemotron-3-ultra-550b",
+    name: "Expert",
+    description: "NVIDIA Nemotron Ultra 550B",
     value: ChatModel.NEMOTRON_3_ULTRA,
-    smallIcon: <BrainIcon className="w-4 h-4 text-pink-500" />,
-    icon: <BrainIcon className="w-5 h-5 text-pink-500" />,
-  },
-  [ChatModel.LLAMA_3_3_70B]: {
-    name: "Llama 3.3 70B",
-    description: "llama-3.3-70b-instruct",
-    value: ChatModel.LLAMA_3_3_70B,
-    smallIcon: <LightningBoltIcon className="w-4 h-4 text-yellow-500" />,
-    icon: <LightningBoltIcon className="w-5 h-5 text-yellow-500" />,
-  },
-  [ChatModel.NEMOTRON_3_SUPER]: {
-    name: "Nemotron 3 Super",
-    description: "nemotron-3-super-120b",
-    value: ChatModel.NEMOTRON_3_SUPER,
-    smallIcon: <BrainIcon className="w-4 h-4 text-green-500" />,
-    icon: <BrainIcon className="w-5 h-5 text-green-500" />,
-  },
-  [ChatModel.LLAMA_3_70B]: {
-    name: "Hyper",
-    description: "Groq/Llama3-70B",
-    value: ChatModel.LLAMA_3_70B,
-    smallIcon: <LightningBoltIcon className="w-4 h-4 text-yellow-500" />,
-    icon: <LightningBoltIcon className="w-5 h-5 text-yellow-500" />,
-  },
-  [ChatModel.LLAMA3]: {
-    name: "Llama3",
-    description: "ollama/llama3.1",
-    value: ChatModel.LLAMA3,
-    smallIcon: <WandSparklesIcon className="w-4 h-4 text-purple-500" />,
-    icon: <WandSparklesIcon className="w-5 h-5 text-purple-500" />,
-  },
-  [ChatModel.GEMMA]: {
-    name: "Gemma",
-    description: "ollama/gemma",
-    value: ChatModel.GEMMA,
-    smallIcon: <SparklesIcon className="w-4 h-4 text-[#449DFF]" />,
-    icon: <SparklesIcon className="w-5 h-5 text-[#449DFF]" />,
-  },
-  [ChatModel.MISTRAL]: {
-    name: "Mistral",
-    description: "ollama/mistral",
-    value: ChatModel.MISTRAL,
-    smallIcon: <AtomIcon className="w-4 h-4 text-[#FF7000]" />,
-    icon: <AtomIcon className="w-5 h-5 text-[#FF7000]" />,
-  },
-  [ChatModel.PHI3_14B]: {
-    name: "Phi3",
-    description: "ollama/phi3:14b",
-    value: ChatModel.PHI3_14B,
-    smallIcon: <FlameIcon className="w-4 h-4 text-green-500" />,
-    icon: <FlameIcon className="w-5 h-5 text-green-500" />,
-  },
-  [ChatModel.CUSTOM]: {
-    name: "Custom",
-    description: "Custom model",
-    value: ChatModel.CUSTOM,
-    smallIcon: <SettingsIcon className="w-4 h-4 text-red-500" />,
-    icon: <SettingsIcon className="w-5 h-5 text-red-500" />,
+    smallIcon: <BrainIcon className="w-4 h-4 text-emerald-400" />,
+    icon: <BrainIcon className="w-5 h-5 text-emerald-400" />,
   },
 };
-
-const localModelMap: Partial<Record<ChatModel, Model>> = _.pickBy(
-  modelMap,
-  (_, key) => isLocalModel(key as ChatModel),
-);
-
-const cloudModelMap: Partial<Record<ChatModel, Model>> = _.pickBy(
-  modelMap,
-  (_, key) => isCloudModel(key as ChatModel),
-);
 
 const ModelItem: React.FC<{ model: Model }> = ({ model }) => (
   <SelectItem
@@ -150,7 +66,7 @@ const ModelItem: React.FC<{ model: Model }> = ({ model }) => (
 );
 
 export function ModelSelection() {
-  const { localMode, model, setModel, toggleLocalMode } = useConfigStore();
+  const { model, setModel } = useConfigStore();
   const selectedModel = modelMap[model] ?? modelMap[ChatModel.SONAR_FREE];
 
   return (
@@ -171,45 +87,12 @@ export function ModelSelection() {
           </div>
         </SelectValue>
       </SelectTrigger>
-      <SelectContent className="w-[250px]">
-        <Tabs
-          className="w-full"
-          defaultValue={localMode ? "local" : "cloud"}
-          onValueChange={(value) => {
-            if (value === "local" && !localMode) {
-              toggleLocalMode();
-            } else if (value === "cloud" && localMode) {
-              toggleLocalMode();
-            }
-          }}
-        >
-          <TabsList className="w-full">
-            <TabsTrigger value="cloud" className="flex-1">
-              Cloud
-            </TabsTrigger>
-            <TabsTrigger
-              value="local"
-              disabled={!env.NEXT_PUBLIC_LOCAL_MODE_ENABLED}
-              className="flex-1 disabled:opacity-50"
-            >
-              Local
-            </TabsTrigger>
-          </TabsList>
-          <TabsContent value="cloud" className="w-full">
-            <SelectGroup className="w-full">
-              {Object.values(cloudModelMap).map((model) => (
-                <ModelItem key={model.value} model={model} />
-              ))}
-            </SelectGroup>
-          </TabsContent>
-          <TabsContent value="local" className="w-full">
-            <SelectGroup className="w-full">
-              {Object.values(localModelMap).map((model) => (
-                <ModelItem key={model.value} model={model} />
-              ))}
-            </SelectGroup>
-          </TabsContent>
-        </Tabs>
+      <SelectContent className="w-[260px]">
+        <SelectGroup>
+          {Object.values(modelMap).map((m) => (
+            <ModelItem key={m.value} model={m} />
+          ))}
+        </SelectGroup>
       </SelectContent>
     </Select>
   );
