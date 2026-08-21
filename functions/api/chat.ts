@@ -13,7 +13,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     if (!prompt) return new Response(JSON.stringify({ error: "Prompt required" }), { status: 400 });
 
-    const response = await fetch("https://api.naga.ac/v1/responses", {
+    const response = await fetch("https://api.naga.ac/v1/chat/completions", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${context.env.NAGA_API_KEY}`,
@@ -21,8 +21,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       },
       body: JSON.stringify({
         model: "sonar:free",
-        input: prompt,
-        tools: [{ type: "web_search" }],
+        messages: [{ role: "user", content: prompt }],
       }),
     });
 
@@ -31,8 +30,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     }
 
     const data: any = await response.json();
-    const outputText = data?.output?.[0]?.content?.[0]?.text ?? "";
-    const citations = data?.output?.[0]?.content?.[0]?.annotations ?? [];
+    const outputText = data?.choices?.[0]?.message?.content ?? "";
+    // Perplexity/Naga citations are usually returned either at the root or within message
+    const citations = data?.citations ?? data?.choices?.[0]?.message?.citations ?? [];
 
     return new Response(
       JSON.stringify({
