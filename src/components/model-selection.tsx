@@ -28,11 +28,11 @@ export const modelMap: Record<ChatModel, Model> = {
     value: ChatModel.SONAR_FREE,
     logoUrl: `https://img.logo.dev/perplexity.ai?token=${LOGO_TOKEN}&size=128&retina=true&format=png`,
   },
-  [ChatModel.DEEPSEEK_V4_FLASH]: {
-    name: "DeepSeek V4",
-    description: "Fast & capable",
-    value: ChatModel.DEEPSEEK_V4_FLASH,
-    logoUrl: `https://img.logo.dev/deepseek.com?token=${LOGO_TOKEN}&size=128&retina=true&format=png`,
+  [ChatModel.NEMOTRON_3_SUPER]: {
+    name: "Nemotron Super",
+    description: "Fast 120B model",
+    value: ChatModel.NEMOTRON_3_SUPER,
+    logoUrl: `https://img.logo.dev/nvidia.com?token=${LOGO_TOKEN}&size=128&retina=true&format=png`,
   },
   [ChatModel.NEMOTRON_3_ULTRA]: {
     name: "Nemotron Ultra",

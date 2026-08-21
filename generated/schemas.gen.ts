@@ -285,7 +285,7 @@ export const $ChatModel = {
   type: "string",
   enum: [
     "sonar:free",
-    "deepseek-v4-flash",
+    "nemotron-3-super-120b-a12b:free",
     "nemotron-3-ultra-550b-a55b:free",
   ],
   title: "ChatModel",

@@ -13,7 +13,7 @@ export function isLocalModel(model: ChatModel) {
 export function isCloudModel(model: ChatModel) {
   return [
     ChatModel.SONAR_FREE,
-    ChatModel.DEEPSEEK_V4_FLASH,
+    ChatModel.NEMOTRON_3_SUPER,
     ChatModel.NEMOTRON_3_ULTRA,
   ].includes(model);
 }

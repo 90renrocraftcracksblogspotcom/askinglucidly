@@ -66,7 +66,7 @@ export type ChatMessage = {
 
 export enum ChatModel {
   SONAR_FREE = "sonar:free",
-  DEEPSEEK_V4_FLASH = "deepseek-v4-flash",
+  NEMOTRON_3_SUPER = "nemotron-3-super-120b-a12b:free",
   NEMOTRON_3_ULTRA = "nemotron-3-ultra-550b-a55b:free",
 }
 
