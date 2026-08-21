@@ -1,0 +1,131 @@
+/api/chat:1  Failed to load resource: the server responded with a status of 503 ()
+0i5b30tvjkl7k.js:7 Error: {"error":"{\"error\":{\"type\":\"server_error\",\"message\":\"The upstream provider is temporarily unavailable. Please retry later.\",\"code\":null,\"param\":null}}"}
+    at o (0i5b30tvjkl7k.js:7:112170)
+o @ 0i5b30tvjkl7k.js:7
+
+{
+  "wallTime": 665,
+  "cpuTime": 1,
+  "truncated": false,
+  "executionModel": "stateless",
+  "outcome": "ok",
+  "scriptVersion": {
+    "id": "9e0fffa4-dc05-4602-80c6-0f31f4c41fb3"
+  },
+  "scriptName": "pages-worker--18109714-production",
+  "diagnosticsChannelEvents": [],
+  "exceptions": [],
+  "logs": [],
+  "eventTimestamp": 1787301604286,
+  "event": {
+    "request": {
+      "url": "https://04dc9226.askinglucidly.pages.dev/api/chat",
+      "method": "POST",
+      "headers": {
+        "accept": "*/*",
+        "accept-encoding": "gzip, br",
+        "accept-language": "en-US,en;q=0.7",
+        "cf-connecting-ip": "2a09:bac5:3afa:11c3::1c5:8b",
+        "cf-ipcountry": "IN",
+        "cf-ray": "a2e854b2b99a85fa",
+        "cf-visitor": "{\"scheme\":\"https\"}",
+        "connection": "Keep-Alive",
+        "content-length": "15",
+        "content-type": "application/json",
+        "host": "04dc9226.askinglucidly.pages.dev",
+        "origin": "https://04dc9226.askinglucidly.pages.dev",
+        "priority": "u=1, i",
+        "referer": "https://04dc9226.askinglucidly.pages.dev/",
+        "sec-ch-ua": "\"Not=A?Brand\";v=\"99\", \"Brave\";v=\"151\", \"Chromium\";v=\"151\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\"",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "sec-gpc": "1",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "x-forwarded-proto": "https",
+        "x-real-ip": "2a09:bac5:3afa:11c3::1c5:8b"
+      },
+      "cf": {
+        "httpProtocol": "HTTP/3",
+        "clientAcceptEncoding": "gzip, deflate, br",
+        "requestPriority": "",
+        "edgeRequestKeepAliveStatus": 1,
+        "requestHeaderNames": {},
+        "clientTcpRtt": 0,
+        "clientQuicRtt": 10,
+        "colo": "BOM",
+        "asn": 13335,
+        "asOrganization": "Cloudflare London, LLC",
+        "country": "IN",
+        "isEUCountry": false,
+        "city": "Mumbai",
+        "continent": "AS",
+        "region": "Maharashtra",
+        "regionCode": "MH",
+        "timezone": "Asia/Kolkata",
+        "longitude": "72.88261",
+        "latitude": "19.07283",
+        "postalCode": "400017",
+        "tlsVersion": "TLSv1.3",
+        "tlsCipher": "AEAD-AES128-GCM-SHA256",
+        "tlsClientRandom": "DEfFvN74LZ4940a8x8zIqn36rpF61hdHpWyNpT0Dt78=",
+        "tlsClientCiphersSha1": "3HTt3+R/6BL3zeALJDSq0pR1yOQ=",
+        "tlsClientExtensionsSha1": "2MLyV089No74Onbtf6/vOqjSHiI=",
+        "tlsClientExtensionsSha1Le": "Wbrc+PzLsRcGvgaR4WnD1ZQpCLA=",
+        "tlsExportedAuthenticator": {
+          "clientHandshake": "37b921daa79c2a3c385c6d6f81047d964da9af67afe3a6b3e436362c5ffccddf",
+          "serverHandshake": "6903ef65f09387628384a112cd4eb86bac444fc68fe8b1a0d1d889ab78102f31",
+          "clientFinished": "17b3f2a2b75d3c45ee51576c1a67e27fb6495c1662e85b180e145eaebd517335",
+          "serverFinished": "914ed70da0fbdf2908bd33f859f2a28b505762cb5725b0dfa58f31a0e9b343b1"
+        },
+        "tlsClientHelloLength": "1701",
+        "tlsClientAuth": {
+          "certPresented": "0",
+          "certVerified": "NONE",
+          "certRevoked": "0",
+          "certIssuerDN": "",
+          "certSubjectDN": "",
+          "certIssuerDNRFC2253": "",
+          "certSubjectDNRFC2253": "",
+          "certIssuerDNLegacy": "",
+          "certSubjectDNLegacy": "",
+          "certSerial": "",
+          "certIssuerSerial": "",
+          "certSKI": "",
+          "certIssuerSKI": "",
+          "certFingerprintSHA1": "",
+          "certFingerprintSHA256": "",
+          "certNotBefore": "",
+          "certNotAfter": "",
+          "certRFC9440": "",
+          "certRFC9440TooLarge": false,
+          "certChainRFC9440": "",
+          "certChainRFC9440TooLarge": false
+        },
+        "verifiedBotCategory": "",
+        "edgeL4": {
+          "deliveryRate": 8149698
+        },
+        "pagesHostName": "04dc9226.askinglucidly.pages.dev",
+        "botManagement": {
+          "corporateProxy": false,
+          "verifiedBot": false,
+          "jsDetection": {
+            "passed": false
+          },
+          "staticResource": false,
+          "detectionIds": {},
+          "score": 99
+        }
+      }
+    },
+    "response": {
+      "status": 503
+    }
+  },
+  "id": 0
+}
+
+THis issue is on our end cuz this issue never happens on other apps

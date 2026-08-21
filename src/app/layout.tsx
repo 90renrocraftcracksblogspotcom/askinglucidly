@@ -1,29 +1,67 @@
+import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
+import Providers from "@/providers";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
+import { GeistSans } from "geist/font/sans";
+import { JetBrains_Mono as Mono } from "next/font/google";
+import { cn } from "@/lib/utils";
+import { Analytics } from "@vercel/analytics/react";
+import { Navbar } from "@/components/nav";
+import { Footer } from "@/components/footer";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const mono = Mono({
   subsets: ["latin"],
+  display: "swap",
+  variable: "--font-mono",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const title = "AskLucidity";
+const description = "Open-source AI powered answer engine by Frostborn.tech.";
 
 export const metadata: Metadata = {
-  title: "AskLucidity by Frostborn.tech",
-  description: "A premium, dark-mode, minimalist AI search engine",
+  metadataBase: new URL("https://asklucidity.com/"),
+  title,
+  description,
+  openGraph: {
+    title,
+    description,
+  },
+  twitter: {
+    title,
+    description,
+    card: "summary_large_image",
+  },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
-    </html>
+    <>
+      <html lang="en" suppressHydrationWarning>
+        <body
+          className={cn("antialiased", GeistSans.className, mono.className)}
+        >
+          <Providers>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="dark"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <Navbar />
+              {children}
+              <Toaster />
+              <Footer />
+              <Analytics />
+            </ThemeProvider>
+          </Providers>
+        </body>
+      </html>
+    </>
   );
 }
