@@ -27,11 +27,11 @@ To protect our API keys from being exposed to the client, we utilize **Cloudflar
 * When the Next.js frontend calls `/api/chat`, Cloudflare intercepts this and runs the edge function.
 * The function securely injects the `NAGA_API_KEY`, makes the request to the upstream LLM provider, handles transient network errors (with built-in retry loops), and returns the sanitized JSON response to the frontend.
 
-### 3. The LLM Provider (Naga API & Sonar)
-We use [Naga API (api.naga.ac)](https://naga.ac) as our backend LLM provider.
-* We specifically query the `sonar:free` model (Sonar by Perplexity), which has native web-search capabilities.
-* Naga API provides this premium, internet-connected LLM access at a fraction of the standard cost.
-* Because Sonar natively handles the web searching and citation generation, we do not need to run our own web scrapers (like SearXNG), drastically simplifying the deployment stack.
+### 3. The LLM Provider (Naga API) & Dual Web-Search Strategy
+We use [Naga API (api.naga.ac)](https://naga.ac) as our backend LLM provider, giving us access to premium models at a fraction of the cost. Because different models have different capabilities, our Cloudflare edge proxy implements a **dual web-search strategy**:
+
+* **Native Search (`sonar:free`):** When the Perplexity Sonar model is selected, we use its native built-in web search tool. We don't need to run any external scrapers; Sonar handles the search and citation generation automatically.
+* **Manual Search Context Injection (Llama & Nemotron):** When standard LLMs like `llama-3.3-70b-instruct:free` or `nemotron-3-ultra-550b` are selected, they lack native internet access. Our edge proxy intelligently detects this, halts the immediate LLM request, and manually queries the **Serper API (`google.serper.dev`)** to scrape live Google search results. It then injects those results directly into the system prompt as context before querying the Naga LLM, effectively giving *any* open-source model high-quality web-search capabilities!
 
 ---
 
@@ -90,6 +90,7 @@ Because we are using Cloudflare Pages Functions (`/functions` folder) instead of
    * **Build output directory:** `.next`
 5. **Configure Environment Variables:**
    * Add `NAGA_API_KEY` to the Cloudflare Pages environment variables in the dashboard.
+   * Add `SERPER_API_KEY` to the environment variables (required if you intend to use Llama or Nemotron models for web search).
 6. Click **Save and Deploy**. Your app will be live globally in minutes.
 
 ---
